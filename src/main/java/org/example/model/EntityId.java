@@ -1,7 +1,12 @@
 package org.example.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class EntityId {
     @Id
@@ -9,13 +14,4 @@ public abstract class EntityId {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    //region Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-    //endregion
 }
