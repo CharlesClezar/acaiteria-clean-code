@@ -1,10 +1,14 @@
 package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+@Getter
+@Setter
 @Entity
 public class PedidoItem extends EntityId {
 
@@ -33,44 +37,4 @@ public class PedidoItem extends EntityId {
     @Column(name = "quantidade", nullable = false)
     private Integer quantidade;
 
-    // Getters e Setters
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public String getDescricaoItem() {
-        return descricaoItem;
-    }
-
-    public void setDescricaoItem(String descricaoItem) {
-        this.descricaoItem = descricaoItem;
-    }
-
-    public Double getValorVenda() {
-        return valorVenda;
-    }
-
-    public void setValorVenda(Double valorVenda) {
-        this.valorVenda = valorVenda;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
 }

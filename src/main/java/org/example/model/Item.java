@@ -1,8 +1,13 @@
 package org.example.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
+@Getter
+@Setter
 @Entity
 public class Item extends EntityId {
     @NotNull
@@ -30,70 +35,4 @@ public class Item extends EntityId {
     @NotNull
     @Column(name = "ativo", nullable = false)
     private Boolean ativo;
-
-    //region getters e setters
-    public UnidadeMedida getUnidadeMedida() {
-        return unidadeMedida;
-    }
-
-    public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
-        this.unidadeMedida = unidadeMedida;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Integer getQuantidadeEstoque() {
-        return quantidadeEstoque;
-    }
-
-    public void setQuantidadeEstoque(Integer quantidadeEstoque) {
-        this.quantidadeEstoque = quantidadeEstoque;
-    }
-
-    public Double getPrecoCompra() {
-        return precoCompra;
-    }
-
-    public void setPrecoCompra(Double precoCompra) {
-        this.precoCompra = precoCompra;
-    }
-
-    public Double getPrecoVenda() {
-        return precoVenda;
-    }
-
-    public void setPrecoVenda(Double precoVenda) {
-        this.precoVenda = precoVenda;
-    }
-
-    public String getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
-    }
-
-    public TipoItem getFiltro() {
-        return filtro;
-    }
-
-    public void setFiltro(TipoItem filtro) {
-        this.filtro = filtro;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-    //endregion
 }

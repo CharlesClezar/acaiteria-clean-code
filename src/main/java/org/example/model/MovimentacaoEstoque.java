@@ -1,10 +1,15 @@
 package org.example.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
 public class MovimentacaoEstoque extends EntityId {
 
@@ -31,45 +36,4 @@ public class MovimentacaoEstoque extends EntityId {
     @Positive
     @Column(name = "valor", nullable = false, precision = 10, scale = 2)
     private Double valor;
-
-    // Getters e Setters
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public Integer getQuantidadeMovimento() {
-        return quantidadeMovimento;
-    }
-
-    public void setQuantidadeMovimento(Integer quantidadeMovimento) {
-        this.quantidadeMovimento = quantidadeMovimento;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
-    }
-
-    public TipoMovimentacao getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoMovimentacao tipo) {
-        this.tipo = tipo;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
 }
