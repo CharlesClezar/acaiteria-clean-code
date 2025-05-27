@@ -5,40 +5,42 @@ import org.example.model.PedidoItem;
 import org.example.model.TipoMovimentacao;
 import org.example.repository.PedidoItemRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PedidoItemService {
-    @Autowired
-    private ModelMapper modelMapper;
 
-    @Autowired
-    private PedidoItemRepository repository;
+    private final PedidoItemRepository repository;
+    private final ModelMapper modelMapper;
+    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
+    private final ItemService itemService;
 
-    @Autowired
-    private MovimentacaoEstoqueService movimentacaoEstoqueService;
-
-    @Autowired
-    private ItemService itemService;
+    public PedidoItemService(PedidoItemRepository repository,
+                             ModelMapper modelMapper,
+                             MovimentacaoEstoqueService movimentacaoEstoqueService,
+                             ItemService itemService) {
+        this.repository = repository;
+        this.modelMapper = modelMapper;
+        this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+        this.itemService = itemService;
+    }
 
     public PedidoItem salvar(PedidoItem entity) {
-        Item item = itemService.buscaPorId(entity.getItem().getId());
-        item.setQuantidadeEstoque(item.getQuantidadeEstoque() - entity.getQuantidade());
-        if(item.getQuantidadeEstoque() < 0) {
-            throw new ValidationException("Quantidade solicitada é maior do que o estoque!");
-        }
-        itemService.alterar(item.getId(), item);
-        movimentacaoEstoqueService.salvarMovimentacao(entity.getItem(), entity.getQuantidade(), TipoMovimentacao.SAIDA, entity.getValorVenda());
+        validarEstoqueEAtualizar(entity);
+        movimentacaoEstoqueService.salvarMovimentacao(
+                entity.getItem(),
+                entity.getQuantidade(),
+                TipoMovimentacao.SAIDA,
+                entity.getValorVenda()
+        );
         return repository.save(entity);
     }
 
-    public PedidoItem salvarByPedido(PedidoItem entity) {
+    public PedidoItem salvarSemMovimentacao(PedidoItem entity) {
         return repository.save(entity);
     }
 
@@ -51,20 +53,27 @@ public class PedidoItemService {
     }
 
     public PedidoItem buscaPorId(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item do pedido não encontrado!"));
     }
 
     public PedidoItem alterar(Long id, PedidoItem entity) {
-        Optional<PedidoItem> existingPedidoItemOptional = repository.findById(id);
-        if(existingPedidoItemOptional.isEmpty()) {
-            throw new NotFoundException("Item do pedido não encontrado!");
-        }
-        PedidoItem existingPedidoItem = existingPedidoItemOptional.get();
-        modelMapper.map(entity, existingPedidoItem);
-        return repository.save(existingPedidoItem);
+        PedidoItem existente = buscaPorId(id);
+        modelMapper.map(entity, existente);
+        return repository.save(existente);
     }
 
     public void remover(Long id) {
         repository.deleteById(id);
+    }
+
+    private void validarEstoqueEAtualizar(PedidoItem entity) {
+        Item item = itemService.buscaPorId(entity.getItem().getId());
+        int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
+        if (novoEstoque < 0) {
+            throw new ValidationException("Quantidade solicitada é maior do que o estoque disponível!");
+        }
+        item.setQuantidadeEstoque(novoEstoque);
+        itemService.alterar(item.getId(), item);
     }
 }

@@ -6,57 +6,57 @@ import javax.validation.constraints.NotBlank;
 
 public class UsuarioCadastroDTO {
 
-    @NotBlank
+    @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
-    @NotBlank
+    @NotBlank(message = "O login é obrigatório.")
     private String login;
 
-    @NotBlank
+    @NotBlank(message = "A senha é obrigatória.")
     private String senha;
 
     private Integer permissao;
 
-    // Getters e Setters
-    public String getNome() {
-        return nome;
-    }
+    // Construtores
+    public UsuarioCadastroDTO() {}
 
-    public void setNome(String nome) {
+    public UsuarioCadastroDTO(String nome, String login, String senha, Integer permissao) {
         this.nome = nome;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
         this.senha = senha;
-    }
-
-    public Integer getPermissao() {
-        return permissao;
-    }
-
-    public void setPermissao(Integer permissao) {
         this.permissao = permissao;
     }
+
+    // Getters e Setters
+    public String getNome() { return nome; }
+
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getLogin() { return login; }
+
+    public void setLogin(String login) { this.login = login; }
+
+    public String getSenha() { return senha; }
+
+    public void setSenha(String senha) { this.senha = senha; }
+
+    public Integer getPermissao() { return permissao; }
+
+    public void setPermissao(Integer permissao) { this.permissao = permissao; }
 
     // Conversão para entidade
     public Usuario toEntity() {
         Usuario usuario = new Usuario();
-        usuario.setNome(this.getNome());
-        usuario.setLogin(this.getLogin());
-        usuario.setSenha(this.getSenha());
-        usuario.setPermissao(this.getPermissao());
+        usuario.setNome(this.nome);
+        usuario.setLogin(this.login);
+        usuario.setSenha(this.senha);
+        usuario.setPermissao(this.permissao);
         return usuario;
+    }
+
+    // Logging seguro (opcional)
+    @Override
+    public String toString() {
+        return "UsuarioCadastroDTO{nome='" + nome + "', login='" + login + "', permissao=" + permissao + "}";
     }
 }

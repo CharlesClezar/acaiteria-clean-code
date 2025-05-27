@@ -7,7 +7,6 @@ import org.example.service.ItemService;
 import org.example.service.MovimentacaoEstoqueService;
 import org.example.service.NotFoundException;
 import org.example.service.ValidationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +14,19 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/item")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ItemController extends AbstractController {
 
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
+    private final MovimentacaoEstoqueService movimentacaoEstoqueService;
 
-    @Autowired
-    private MovimentacaoEstoqueService movimentacaoEstoqueService;
+    public ItemController(ItemService itemService, MovimentacaoEstoqueService movimentacaoEstoqueService) {
+        this.itemService = itemService;
+        this.movimentacaoEstoqueService = movimentacaoEstoqueService;
+    }
 
     @PostMapping
     public ResponseEntity<ItemDTO> create(@RequestBody @Valid ItemDTO itemDTO) throws ValidationException {
@@ -85,7 +85,8 @@ public class ItemController extends AbstractController {
         } catch (NotFoundException nfe) {
             return ResponseEntity.notFound().build();
         } catch (ValidationException ve) {
-            throw new ValidationException("Não é possível adicionar menos itens que a quantidade atual do estoque.");
+            // Mantém o lançamento para ser capturado pelo handler global
+            throw ve;
         }
     }
 }

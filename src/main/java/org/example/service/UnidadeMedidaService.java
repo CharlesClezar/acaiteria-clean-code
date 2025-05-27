@@ -4,26 +4,29 @@ import org.example.model.QUnidadeMedida;
 import org.example.model.UnidadeMedida;
 import org.example.repository.UnidadeMedidaRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UnidadeMedidaService {
-    @Autowired
-    private ModelMapper modelMapper;
 
-    @Autowired
-    private UnidadeMedidaRepository repository;
+    private final UnidadeMedidaRepository repository;
+    private final ModelMapper modelMapper;
+
+    public UnidadeMedidaService(UnidadeMedidaRepository repository, ModelMapper modelMapper) {
+        this.repository = repository;
+        this.modelMapper = modelMapper;
+    }
 
     public UnidadeMedida salvar(UnidadeMedida entity) {
-        //region Regras de negócio
-        validaUnidadeMedida(entity.getSigla(), 0L);
-        //endregion
+        if (entity == null || entity.getSigla() == null) {
+            throw new ValidationException("Unidade de medida inválida.");
+        }
+
+        validarDuplicidadeSigla(entity.getSigla(), 0L);
         return repository.save(entity);
     }
 
@@ -36,29 +39,32 @@ public class UnidadeMedidaService {
     }
 
     public UnidadeMedida buscaPorId(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Unidade de medida não encontrada!"));
     }
 
     public UnidadeMedida alterar(Long id, UnidadeMedida entity) {
-        Optional<UnidadeMedida> existingUnidadeMedidaOptional = repository.findById(id);
-        if(existingUnidadeMedidaOptional.isEmpty()) {
-            throw new NotFoundException("Unidade de medida não encontrada!");
+        if (entity == null || entity.getSigla() == null) {
+            throw new ValidationException("Unidade de medida inválida.");
         }
-        UnidadeMedida existingUnidadeMedida = existingUnidadeMedidaOptional.get();
-        modelMapper.map(entity, existingUnidadeMedida);
-        //region Regras de negócio
-        validaUnidadeMedida(entity.getSigla(), id);
-        //endregion
-        return repository.save(existingUnidadeMedida);
+
+        UnidadeMedida existente = buscaPorId(id);
+        validarDuplicidadeSigla(entity.getSigla(), id);
+
+        modelMapper.map(entity, existente);
+        return repository.save(existente);
     }
 
     public void remover(Long id) {
         repository.deleteById(id);
     }
 
-    private void validaUnidadeMedida(String sigla, Long id) {
-        boolean existe = repository.exists(QUnidadeMedida.unidadeMedida.id.ne(id).and(QUnidadeMedida.unidadeMedida.sigla.eq(sigla)));
-        if(existe) {
+    private void validarDuplicidadeSigla(String sigla, Long id) {
+        boolean existe = repository.exists(
+                QUnidadeMedida.unidadeMedida.id.ne(id)
+                        .and(QUnidadeMedida.unidadeMedida.sigla.eq(sigla))
+        );
+        if (existe) {
             throw new ValidationException("Sigla já existente no sistema!");
         }
     }

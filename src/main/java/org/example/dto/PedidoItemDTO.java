@@ -8,72 +8,70 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PedidoItemDTO {
+
     private Long id;
     private String descricaoItem;
     private Double valorVenda;
     private Integer quantidade;
 
-    //region Getters e Setters
-    public Long getId() {
-        return id;
-    }
+    // Construtores
+    public PedidoItemDTO() {}
 
-    public void setId(Long id) {
+    public PedidoItemDTO(Long id, String descricaoItem, Double valorVenda, Integer quantidade) {
         this.id = id;
-    }
-
-    public String getDescricaoItem() {
-        return descricaoItem;
-    }
-
-    public void setDescricaoItem(String descricaoItem) {
         this.descricaoItem = descricaoItem;
-    }
-
-    public Double getValorVenda() {
-        return valorVenda;
-    }
-
-    public void setValorVenda(Double valorVenda) {
         this.valorVenda = valorVenda;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
-    //endregion
 
-    //region Constructors
+    // Getters e Setters
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
+
+    public String getDescricaoItem() { return descricaoItem; }
+
+    public void setDescricaoItem(String descricaoItem) { this.descricaoItem = descricaoItem; }
+
+    public Double getValorVenda() { return valorVenda; }
+
+    public void setValorVenda(Double valorVenda) { this.valorVenda = valorVenda; }
+
+    public Integer getQuantidade() { return quantidade; }
+
+    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+
+    // Conversão de entidade para DTO
     public static PedidoItemDTO fromEntity(PedidoItem pedidoItem) {
-        PedidoItemDTO dto = new PedidoItemDTO();
-        dto.setId(pedidoItem.getId());
-        dto.setDescricaoItem(pedidoItem.getDescricaoItem());
-        dto.setValorVenda(pedidoItem.getValorVenda());
-        dto.setQuantidade(pedidoItem.getQuantidade());
-        return dto;
+        if (pedidoItem == null) return null;
+        return new PedidoItemDTO(
+                pedidoItem.getId(),
+                pedidoItem.getDescricaoItem(),
+                pedidoItem.getValorVenda(),
+                pedidoItem.getQuantidade()
+        );
     }
 
+    // Conversão de DTO para entidade
     public PedidoItem toEntity() {
-        PedidoItem pedidoItem = new PedidoItem();
-        pedidoItem.setId(this.getId());
-        pedidoItem.setDescricaoItem(this.getDescricaoItem());
-        pedidoItem.setValorVenda(this.getValorVenda());
-        pedidoItem.setQuantidade(this.getQuantidade());
-        return pedidoItem;
+        PedidoItem entity = new PedidoItem();
+        entity.setId(this.id);
+        entity.setDescricaoItem(this.descricaoItem);
+        entity.setValorVenda(this.valorVenda);
+        entity.setQuantidade(this.quantidade);
+        return entity;
     }
 
-    public static List<PedidoItemDTO> fromEntity(List<PedidoItem> pedidoItems) {
-        return pedidoItems.stream().map(pedidoItem -> fromEntity(pedidoItem)).collect(Collectors.toList());
+    // Conversão de lista de entidades
+    public static List<PedidoItemDTO> fromEntity(List<PedidoItem> entities) {
+        return entities.stream()
+                .map(PedidoItemDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
-    public static Page<PedidoItemDTO> fromEntity(Page<PedidoItem> pedidoItems) {
-        List<PedidoItemDTO> pedidoItemsFind = pedidoItems.stream().map(pedidoItem -> fromEntity(pedidoItem)).collect(Collectors.toList());
-        Page<PedidoItemDTO> pedidoItemsDTO = new PageImpl<>(pedidoItemsFind, pedidoItems.getPageable(), pedidoItems.getTotalElements());
-        return pedidoItemsDTO;
+    // Conversão de página de entidades
+    public static Page<PedidoItemDTO> fromEntity(Page<PedidoItem> page) {
+        List<PedidoItemDTO> dtoList = fromEntity(page.getContent());
+        return new PageImpl<>(dtoList, page.getPageable(), page.getTotalElements());
     }
-    //endregion
 }

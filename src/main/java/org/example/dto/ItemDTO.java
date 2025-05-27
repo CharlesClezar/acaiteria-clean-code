@@ -1,13 +1,11 @@
 package org.example.dto;
 
 import org.example.model.Item;
-import org.example.model.MovimentacaoEstoque;
 import org.example.model.TipoItem;
 import org.example.model.UnidadeMedida;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,82 +20,37 @@ public class ItemDTO {
     private TipoItem filtro;
     private Boolean ativo;
 
-    //region Getters e Setters
-    public Long getId() {
-        return id;
-    }
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public UnidadeMedida getUnidadeMedida() { return unidadeMedida; }
+    public void setUnidadeMedida(UnidadeMedida unidadeMedida) { this.unidadeMedida = unidadeMedida; }
 
-    public UnidadeMedida getUnidadeMedida() {
-        return unidadeMedida;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
-        this.unidadeMedida = unidadeMedida;
-    }
+    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
+    public void setQuantidadeEstoque(Integer quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public Double getPrecoCompra() { return precoCompra; }
+    public void setPrecoCompra(Double precoCompra) { this.precoCompra = precoCompra; }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+    public Double getPrecoVenda() { return precoVenda; }
+    public void setPrecoVenda(Double precoVenda) { this.precoVenda = precoVenda; }
 
-    public Integer getQuantidadeEstoque() {
-        return quantidadeEstoque;
-    }
+    public String getImagem() { return imagem; }
+    public void setImagem(String imagem) { this.imagem = imagem; }
 
-    public void setQuantidadeEstoque(Integer quantidadeEstoque) {
-        this.quantidadeEstoque = quantidadeEstoque;
-    }
+    public TipoItem getFiltro() { return filtro; }
+    public void setFiltro(TipoItem filtro) { this.filtro = filtro; }
 
-    public Double getPrecoCompra() {
-        return precoCompra;
-    }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 
-    public void setPrecoCompra(Double precoCompra) {
-        this.precoCompra = precoCompra;
-    }
-
-    public Double getPrecoVenda() {
-        return precoVenda;
-    }
-
-    public void setPrecoVenda(Double precoVenda) {
-        this.precoVenda = precoVenda;
-    }
-
-    public String getImagem() {
-        return imagem;
-    }
-
-    public void setImagem(String imagem) {
-        this.imagem = imagem;
-    }
-
-    public TipoItem getFiltro() {
-        return filtro;
-    }
-
-    public void setFiltro(TipoItem filtro) {
-        this.filtro = filtro;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-    //endregion
-
-    //region Constructors
+    // Conversores
     public static ItemDTO fromEntity(Item item) {
+        if (item == null) return null;
         ItemDTO dto = new ItemDTO();
         dto.setId(item.getId());
         dto.setUnidadeMedida(item.getUnidadeMedida());
@@ -113,26 +66,24 @@ public class ItemDTO {
 
     public Item toEntity() {
         Item item = new Item();
-        item.setId(this.getId());
-        item.setUnidadeMedida(this.getUnidadeMedida());
-        item.setDescricao(this.getDescricao());
-        item.setQuantidadeEstoque(this.getQuantidadeEstoque());
-        item.setPrecoCompra(this.getPrecoCompra());
-        item.setPrecoVenda(this.getPrecoVenda());
-        item.setImagem(this.getImagem());
-        item.setFiltro(this.getFiltro());
-        item.setAtivo(this.getAtivo());
+        item.setId(this.id);
+        item.setUnidadeMedida(this.unidadeMedida);
+        item.setDescricao(this.descricao);
+        item.setQuantidadeEstoque(this.quantidadeEstoque);
+        item.setPrecoCompra(this.precoCompra);
+        item.setPrecoVenda(this.precoVenda);
+        item.setImagem(this.imagem);
+        item.setFiltro(this.filtro);
+        item.setAtivo(this.ativo);
         return item;
     }
 
     public static List<ItemDTO> fromEntity(List<Item> items) {
-        return items.stream().map(item -> fromEntity(item)).collect(Collectors.toList());
+        return items.stream().map(ItemDTO::fromEntity).collect(Collectors.toList());
     }
 
     public static Page<ItemDTO> fromEntity(Page<Item> items) {
-        List<ItemDTO> itemsFind = items.stream().map(item -> fromEntity(item)).collect(Collectors.toList());
-        Page<ItemDTO> itemsDTO = new PageImpl<>(itemsFind, items.getPageable(), items.getTotalElements());
-        return itemsDTO;
+        List<ItemDTO> dtos = items.stream().map(ItemDTO::fromEntity).collect(Collectors.toList());
+        return new PageImpl<>(dtos, items.getPageable(), items.getTotalElements());
     }
-    //endregion
 }

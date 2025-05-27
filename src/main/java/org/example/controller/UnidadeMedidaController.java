@@ -4,7 +4,6 @@ import org.example.dto.UnidadeMedidaDTO;
 import org.example.model.UnidadeMedida;
 import org.example.service.NotFoundException;
 import org.example.service.UnidadeMedidaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,11 @@ import java.net.URI;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UnidadeMedidaController extends AbstractController {
 
-    @Autowired
-    private UnidadeMedidaService service;
+    private final UnidadeMedidaService service;
+
+    public UnidadeMedidaController(UnidadeMedidaService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<UnidadeMedidaDTO> create(@RequestBody @Valid UnidadeMedidaDTO dto) {
@@ -57,7 +59,7 @@ public class UnidadeMedidaController extends AbstractController {
             UnidadeMedida alterado = service.alterar(id, entity);
             return ResponseEntity.ok(UnidadeMedidaDTO.fromEntity(alterado));
         } catch (NotFoundException e) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
     }
 }

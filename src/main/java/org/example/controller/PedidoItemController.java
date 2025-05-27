@@ -4,7 +4,6 @@ import org.example.dto.PedidoItemDTO;
 import org.example.model.PedidoItem;
 import org.example.service.NotFoundException;
 import org.example.service.PedidoItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,11 @@ import java.net.URI;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PedidoItemController extends AbstractController {
 
-    @Autowired
-    private PedidoItemService service;
+    private final PedidoItemService service;
+
+    public PedidoItemController(PedidoItemService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<PedidoItemDTO> create(@RequestBody @Valid PedidoItemDTO dto) {
@@ -58,7 +60,7 @@ public class PedidoItemController extends AbstractController {
             PedidoItem alterado = service.alterar(id, entity);
             return ResponseEntity.ok(PedidoItemDTO.fromEntity(alterado));
         } catch (NotFoundException nfe) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -6,7 +6,6 @@ import org.example.dto.LoginDTO;
 import org.example.model.Usuario;
 import org.example.service.NotFoundException;
 import org.example.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,11 @@ import java.net.URI;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UsuarioController extends AbstractController {
 
-    @Autowired
-    private UsuarioService service;
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCadastroDTO dto) {
@@ -70,7 +72,7 @@ public class UsuarioController extends AbstractController {
             Usuario alterado = service.alterar(id, entity);
             return ResponseEntity.ok(UsuarioDTO.fromEntity(alterado));
         } catch (NotFoundException nfe) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
     }
 }

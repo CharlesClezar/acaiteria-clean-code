@@ -4,7 +4,6 @@ import org.example.dto.MovimentacaoEstoqueDTO;
 import org.example.model.MovimentacaoEstoque;
 import org.example.service.MovimentacaoEstoqueService;
 import org.example.service.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/movimentacaoEstoque")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MovimentacaoEstoqueController extends AbstractController {
 
-    @Autowired
-    private MovimentacaoEstoqueService service;
+    private final MovimentacaoEstoqueService service;
+
+    public MovimentacaoEstoqueController(MovimentacaoEstoqueService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<MovimentacaoEstoqueDTO> create(@RequestBody @Valid MovimentacaoEstoqueDTO dto) {
@@ -58,8 +59,8 @@ public class MovimentacaoEstoqueController extends AbstractController {
             MovimentacaoEstoque entity = dto.toEntity();
             MovimentacaoEstoque alterado = service.alterar(id, entity);
             return ResponseEntity.ok(MovimentacaoEstoqueDTO.fromEntity(alterado));
-        } catch (NotFoundException nfe) {
-            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
