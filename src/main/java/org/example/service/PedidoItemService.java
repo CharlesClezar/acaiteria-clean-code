@@ -30,7 +30,8 @@ public class PedidoItemService {
     }
 
     public PedidoItem salvar(PedidoItem entity) {
-        validarEstoqueEAtualizar(entity);
+        validarEstoque(entity);
+        atualizarEstoque(entity);
         movimentacaoEstoqueService.registrarMovimentacao(
                 entity.getItem(),
                 entity.getQuantidade(),
@@ -67,12 +68,17 @@ public class PedidoItemService {
         repository.deleteById(id);
     }
 
-    private void validarEstoqueEAtualizar(PedidoItem entity) {
+    private void validarEstoque(PedidoItem entity) {
         Item item = itemService.buscarItemPorId(entity.getItem().getId());
         int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
         if (novoEstoque < 0) {
             throw new ValidationException("Quantidade solicitada é maior do que o estoque disponível!");
         }
+    }
+
+    private void atualizarEstoque(PedidoItem entity) {
+        Item item = itemService.buscarItemPorId(entity.getItem().getId());
+        int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
         item.setQuantidadeEstoque(novoEstoque);
         itemService.editarItem(item.getId(), item);
     }
