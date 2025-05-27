@@ -1,9 +1,6 @@
 package org.example.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.model.MovimentacaoEstoque;
 import org.example.model.TipoMovimentacao;
 import org.springframework.data.domain.Page;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class MovimentacaoEstoqueDTO {
 
     private Long id;

@@ -1,9 +1,6 @@
 package org.example.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.model.Item;
 import org.example.model.TipoItem;
 import org.example.model.UnidadeMedida;
@@ -12,10 +9,12 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class ItemDTO {
     private Long id;
     private UnidadeMedida unidadeMedida;
@@ -26,7 +25,6 @@ public class ItemDTO {
     private String imagem;
     private TipoItem filtro;
     private Boolean ativo;
-
 
     // Conversores
     public static ItemDTO fromEntity(Item item) {
