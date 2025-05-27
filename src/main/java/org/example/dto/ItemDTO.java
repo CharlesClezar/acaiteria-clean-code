@@ -1,5 +1,9 @@
 package org.example.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.model.Item;
 import org.example.model.TipoItem;
 import org.example.model.UnidadeMedida;
@@ -8,6 +12,10 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ItemDTO {
     private Long id;
     private UnidadeMedida unidadeMedida;
@@ -19,33 +27,6 @@ public class ItemDTO {
     private TipoItem filtro;
     private Boolean ativo;
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public UnidadeMedida getUnidadeMedida() { return unidadeMedida; }
-    public void setUnidadeMedida(UnidadeMedida unidadeMedida) { this.unidadeMedida = unidadeMedida; }
-
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
-
-    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
-    public void setQuantidadeEstoque(Integer quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
-
-    public Double getPrecoCompra() { return precoCompra; }
-    public void setPrecoCompra(Double precoCompra) { this.precoCompra = precoCompra; }
-
-    public Double getPrecoVenda() { return precoVenda; }
-    public void setPrecoVenda(Double precoVenda) { this.precoVenda = precoVenda; }
-
-    public String getImagem() { return imagem; }
-    public void setImagem(String imagem) { this.imagem = imagem; }
-
-    public TipoItem getFiltro() { return filtro; }
-    public void setFiltro(TipoItem filtro) { this.filtro = filtro; }
-
-    public Boolean getAtivo() { return ativo; }
-    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
 
     // Conversores
     public static ItemDTO fromEntity(Item item) {

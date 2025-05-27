@@ -1,44 +1,25 @@
 package org.example.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.model.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class UsuarioDTO {
 
     private Long id;
     private String nome;
     private String login;
     private Integer permissao;
-
-    // Construtores
-    public UsuarioDTO() {}
-
-    public UsuarioDTO(Long id, String nome, String login, Integer permissao) {
-        this.id = id;
-        this.nome = nome;
-        this.login = login;
-        this.permissao = permissao;
-    }
-
-    // Getters e Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getNome() { return nome; }
-
-    public void setNome(String nome) { this.nome = nome; }
-
-    public String getLogin() { return login; }
-
-    public void setLogin(String login) { this.login = login; }
-
-    public Integer getPermissao() { return permissao; }
-
-    public void setPermissao(Integer permissao) { this.permissao = permissao; }
 
     // Conversões
     public static UsuarioDTO fromEntity(Usuario usuario) {

@@ -1,7 +1,16 @@
 package org.example.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.validation.constraints.NotBlank;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class LoginDTO {
 
     @NotBlank(message = "Login não pode estar em branco")
@@ -9,31 +18,6 @@ public class LoginDTO {
 
     @NotBlank(message = "Senha não pode estar em branco")
     private String senha;
-
-    // Construtores
-    public LoginDTO() {}
-
-    public LoginDTO(String login, String senha) {
-        this.login = login;
-        this.senha = senha;
-    }
-
-    // Getters e setters
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
 
     // Logging seguro
     @Override

@@ -115,9 +115,7 @@ if (repository.exists(QUnidadeMedida.unidadeMedida.id.ne(id).and(QUnidadeMedida.
 ```
 - Essa alteração reduz ruído no código e segue o princípio do Clean Code de evitar declarações desnecessárias quando não há reutilização da variável.
 
-
-
-
-
-
-
+### ✅ Uso de Lombok para Redução de Boilerplate
+- Anotações do **Lombok** foram adicionadas às classes DTOs e modelos, como `@Getter`, `@Setter`, `@NoArgsConstructor` e `@AllArgsConstructor`.
+- Essa abordagem elimina a necessidade de escrever manualmente os métodos de acesso, construtores e facilita a manutenção do código.
+- Além de reduzir significativamente o tamanho dos arquivos, o uso do Lombok melhora a **produtividade do desenvolvedor** e **foca no domínio da aplicação**, mantendo o código mais limpo e enxuto.

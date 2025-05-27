@@ -1,38 +1,24 @@
 package org.example.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.model.UnidadeMedida;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class UnidadeMedidaDTO {
 
     private Long id;
     private String sigla;
     private String descricao;
-
-    // Construtores
-    public UnidadeMedidaDTO() {}
-
-    public UnidadeMedidaDTO(Long id, String sigla, String descricao) {
-        this.id = id;
-        this.sigla = sigla;
-        this.descricao = descricao;
-    }
-
-    // Getters e Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getSigla() { return sigla; }
-
-    public void setSigla(String sigla) { this.sigla = sigla; }
-
-    public String getDescricao() { return descricao; }
-
-    public void setDescricao(String descricao) { this.descricao = descricao; }
 
     // Conversão de entidade para DTO
     public static UnidadeMedidaDTO fromEntity(UnidadeMedida unidadeMedida) {
