@@ -60,11 +60,7 @@ public class UnidadeMedidaService {
     }
 
     private void validarDuplicidadeSigla(String sigla, Long id) {
-        boolean existe = repository.exists(
-                QUnidadeMedida.unidadeMedida.id.ne(id)
-                        .and(QUnidadeMedida.unidadeMedida.sigla.eq(sigla))
-        );
-        if (existe) {
+        if (repository.exists(QUnidadeMedida.unidadeMedida.id.ne(id).and(QUnidadeMedida.unidadeMedida.sigla.eq(sigla)))) {
             throw new ValidationException("Sigla já existente no sistema!");
         }
     }

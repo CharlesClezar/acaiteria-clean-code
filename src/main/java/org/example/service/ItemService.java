@@ -66,11 +66,7 @@ public class ItemService {
     }
 
     private void verificarItemDuplicado(String descricao, Long id) {
-        boolean existe = repository.exists(
-                QItem.item.id.ne(id).and(QItem.item.descricao.eq(descricao))
-        );
-
-        if (existe) {
+          if (repository.exists(QItem.item.id.ne(id).and(QItem.item.descricao.eq(descricao)))) {
             throw new ValidationException("Já existe um item com a descrição '" + descricao + "'.");
         }
     }

@@ -65,11 +65,7 @@ public class UsuarioService {
     }
 
     private void validarDuplicidadeLogin(String login, Long id) {
-        boolean existe = repository.exists(
-                QUsuario.usuario.id.ne(id)
-                        .and(QUsuario.usuario.login.eq(login))
-        );
-        if (existe) {
+        if (repository.exists(QUsuario.usuario.id.ne(id).and(QUsuario.usuario.login.eq(login)))) {
             throw new ValidationException("Login já existente no sistema!");
         }
     }
