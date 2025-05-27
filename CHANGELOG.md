@@ -1,0 +1,28 @@
+# ChangeLog - Projeto Acaiteria Clean Code
+
+## [2025-05-26] Refatorações estruturais e correções SonarQube
+
+### ✅ Refatoração de Controllers
+- Aplicada conversão de entidades JPA para DTOs em todos os Controllers:
+    - `ItemController`
+    - `PedidoController`
+    - `PedidoItemController`
+    - `UnidadeMedidaController`
+    - `MovimentacaoEstoqueController`
+- Removido uso direto de entidades nos endpoints públicos (`@RequestBody` e `@ResponseBody`).
+- Corrigido problema de segurança reportado pelo Sonar: `Replace this persistent entity with a DTO object`.
+
+### ✅ DTOs ajustados
+- DTOs atualizados para conter apenas dados simples e seguros (sem entidades aninhadas):
+    - `ItemDTO`
+    - `PedidoDTO`
+    - `PedidoItemDTO`
+    - `UnidadeMedidaDTO`
+    - `MovimentacaoEstoqueDTO`
+
+
+
+
+
+
+

@@ -17,13 +17,16 @@ import java.net.URI;
 @RequestMapping("/api/pedidoItem")
 @CrossOrigin(origins = "http://localhost:3000")
 public class PedidoItemController extends AbstractController {
+
     @Autowired
     private PedidoItemService service;
 
     @PostMapping
-    public ResponseEntity<PedidoItem> create(@RequestBody @Valid PedidoItem entity) {
+    public ResponseEntity<PedidoItemDTO> create(@RequestBody @Valid PedidoItemDTO dto) {
+        PedidoItem entity = dto.toEntity();
         PedidoItem save = service.salvar(entity);
-        return ResponseEntity.created(URI.create("/api/pedidoItem/" + entity.getId())).body(save);
+        return ResponseEntity.created(URI.create("/api/pedidoItem/" + save.getId()))
+                .body(PedidoItemDTO.fromEntity(save));
     }
 
     @GetMapping
@@ -31,29 +34,30 @@ public class PedidoItemController extends AbstractController {
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "15") int size) {
         Page<PedidoItem> pedidoItems = service.buscaTodos(filter, PageRequest.of(page, size));
-        Page<PedidoItemDTO> pedidoItemDTOS = PedidoItemDTO.fromEntity(pedidoItems);
-        return ResponseEntity.ok(pedidoItemDTOS);
+        Page<PedidoItemDTO> dtos = PedidoItemDTO.fromEntity(pedidoItems);
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<PedidoItem> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<PedidoItemDTO> findById(@PathVariable("id") Long id) {
         PedidoItem pedidoItem = service.buscaPorId(id);
-        return ResponseEntity.ok(pedidoItem);
+        return ResponseEntity.ok(PedidoItemDTO.fromEntity(pedidoItem));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<PedidoItem> remove(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
         service.remover(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PedidoItem> update(@PathVariable("id") Long id, @RequestBody PedidoItem entity) {
+    public ResponseEntity<PedidoItemDTO> update(@PathVariable("id") Long id,
+                                                @RequestBody @Valid PedidoItemDTO dto) {
         try {
+            PedidoItem entity = dto.toEntity();
             PedidoItem alterado = service.alterar(id, entity);
-            return ResponseEntity.ok().body(alterado);
-        }
-        catch (NotFoundException nfe) {
+            return ResponseEntity.ok(PedidoItemDTO.fromEntity(alterado));
+        } catch (NotFoundException nfe) {
             return ResponseEntity.noContent().build();
         }
     }

@@ -1,6 +1,8 @@
 package org.example.controller;
 
+import org.example.dto.UsuarioCadastroDTO;
 import org.example.dto.UsuarioDTO;
+import org.example.dto.LoginDTO;
 import org.example.model.Usuario;
 import org.example.service.NotFoundException;
 import org.example.service.UsuarioService;
@@ -18,24 +20,24 @@ import java.net.URI;
 @RequestMapping("/api/usuario")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UsuarioController extends AbstractController {
+
     @Autowired
     private UsuarioService service;
 
     @PostMapping
-    public ResponseEntity<Usuario> create(@RequestBody @Valid Usuario entity) {
-        Usuario save = service.salvar(entity);
-        return ResponseEntity.created(URI.create("/api/usuario/" + entity.getId())).body(save);
+    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCadastroDTO dto) {
+        Usuario entity = dto.toEntity();
+        Usuario saved = service.salvar(entity);
+        return ResponseEntity.created(URI.create("/api/usuario/" + saved.getId()))
+                .body(UsuarioDTO.fromEntity(saved));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Usuario> login(@RequestBody Usuario entity) {
-        String username = entity.getLogin();
-        String password = entity.getSenha();
-        Usuario usuario = service.findByUserAndPassword(username, password);
-        if(usuario != null) {
-            return ResponseEntity.ok(usuario);
-        }
-        else {
+    public ResponseEntity<UsuarioDTO> login(@RequestBody @Valid LoginDTO login) {
+        Usuario usuario = service.findByUserAndPassword(login.getLogin(), login.getSenha());
+        if (usuario != null) {
+            return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -45,29 +47,29 @@ public class UsuarioController extends AbstractController {
                                                     @RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "15") int size) {
         Page<Usuario> usuarios = service.buscaTodos(filter, PageRequest.of(page, size));
-        Page<UsuarioDTO> usuarioDTOS = UsuarioDTO.fromEntity(usuarios);
-        return ResponseEntity.ok(usuarioDTOS);
+        return ResponseEntity.ok(UsuarioDTO.fromEntity(usuarios));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Usuario> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable("id") Long id) {
         Usuario usuario = service.buscaPorId(id);
-        return ResponseEntity.ok(usuario);
+        return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Usuario> remove(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
         service.remover(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody Usuario entity) {
+    public ResponseEntity<UsuarioDTO> update(@PathVariable("id") Long id,
+                                             @RequestBody @Valid UsuarioCadastroDTO dto) {
         try {
+            Usuario entity = dto.toEntity();
             Usuario alterado = service.alterar(id, entity);
-            return ResponseEntity.ok().body(alterado);
-        }
-        catch (NotFoundException nfe) {
+            return ResponseEntity.ok(UsuarioDTO.fromEntity(alterado));
+        } catch (NotFoundException nfe) {
             return ResponseEntity.noContent().build();
         }
     }

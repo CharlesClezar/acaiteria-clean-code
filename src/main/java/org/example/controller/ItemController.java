@@ -10,18 +10,18 @@ import org.example.service.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/item")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ItemController extends AbstractController {
+
     @Autowired
     private ItemService itemService;
 
@@ -29,10 +29,17 @@ public class ItemController extends AbstractController {
     private MovimentacaoEstoqueService movimentacaoEstoqueService;
 
     @PostMapping
-    public ResponseEntity<Item> create(@RequestBody @Valid Item entity) throws ValidationException {
-            Item save = itemService.salvar(entity);
-            movimentacaoEstoqueService.salvarMovimentacao(entity, entity.getQuantidadeEstoque(), TipoMovimentacao.ENTRADA, entity.getPrecoCompra() * entity.getQuantidadeEstoque());
-            return ResponseEntity.created(URI.create("/api/item/" + entity.getId())).body(save);
+    public ResponseEntity<ItemDTO> create(@RequestBody @Valid ItemDTO itemDTO) throws ValidationException {
+        Item entity = itemDTO.toEntity();
+        Item saved = itemService.salvar(entity);
+        movimentacaoEstoqueService.salvarMovimentacao(
+                saved,
+                saved.getQuantidadeEstoque(),
+                TipoMovimentacao.ENTRADA,
+                saved.getPrecoCompra() * saved.getQuantidadeEstoque()
+        );
+        return ResponseEntity.created(URI.create("/api/item/" + saved.getId()))
+                .body(ItemDTO.fromEntity(saved));
     }
 
     @GetMapping
@@ -45,48 +52,40 @@ public class ItemController extends AbstractController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Item> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<ItemDTO> findById(@PathVariable("id") Long id) {
         Item item = itemService.buscaPorId(id);
-        return ResponseEntity.ok(item);
+        return ResponseEntity.ok(ItemDTO.fromEntity(item));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Item> remove(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
         itemService.remover(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Item> update(@PathVariable("id") Long id, @RequestBody Item entity) {
+    public ResponseEntity<ItemDTO> update(@PathVariable("id") Long id, @RequestBody @Valid ItemDTO itemDTO) {
         try {
-            Integer quantidade = itemService.buscaPorId(id).getQuantidadeEstoque();
-            if (entity.getQuantidadeEstoque() >= quantidade)
-            {
-                Item alterado = itemService.alterar(id, entity);
+            Integer quantidadeAnterior = itemService.buscaPorId(id).getQuantidadeEstoque();
+            Item entity = itemDTO.toEntity();
+            Item alterado = itemService.alterar(id, entity);
 
-                if(!quantidade.equals(alterado.getQuantidadeEstoque())) {
-                    Integer diferenca = alterado.getQuantidadeEstoque() - quantidade;
-                    Double valor = alterado.getPrecoCompra() * diferenca;
-                    movimentacaoEstoqueService.salvarMovimentacao(alterado, diferenca, TipoMovimentacao.ENTRADA, valor);
-                }
-                return ResponseEntity.ok().body(alterado);
+            if (!quantidadeAnterior.equals(alterado.getQuantidadeEstoque())) {
+                Integer diferenca = alterado.getQuantidadeEstoque() - quantidadeAnterior;
+                Double valor = alterado.getPrecoCompra() * Math.abs(diferenca);
+                movimentacaoEstoqueService.salvarMovimentacao(
+                        alterado,
+                        diferenca,
+                        diferenca > 0 ? TipoMovimentacao.ENTRADA : TipoMovimentacao.SAIDA,
+                        valor
+                );
             }
-            else{
-                throw new ValidationException("Não é possível adicionar menos itens que a quantidade atual do estoque.");
-            }
-        }
-        catch (NotFoundException nfe) {
-            return ResponseEntity.noContent().build();
+
+            return ResponseEntity.ok(ItemDTO.fromEntity(alterado));
+        } catch (NotFoundException nfe) {
+            return ResponseEntity.notFound().build();
+        } catch (ValidationException ve) {
+            throw new ValidationException("Não é possível adicionar menos itens que a quantidade atual do estoque.");
         }
     }
 }
-
-//region antiga movimentacao
-//MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
-//movimentacao.setItem(alterado);
-//movimentacao.setQuantidade_movimento(Math.abs(quantidade - alterado.getQuantidade_estoque()));
-//movimentacao.setData_hora(new Date());
-//movimentacao.setTipo("e");
-//movimentacao.setValor(alterado.getPreco_compra() * Math.abs(quantidade - alterado.getQuantidade_estoque()));
-//movimentacaoEstoqueService.salvar(movimentacao);
-//endregion

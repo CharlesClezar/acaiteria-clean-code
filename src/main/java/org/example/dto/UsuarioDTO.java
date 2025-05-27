@@ -11,10 +11,9 @@ public class UsuarioDTO {
     private Long id;
     private String nome;
     private String login;
-    private String senha;
     private Integer permissao;
 
-    //region Getters e Setters
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -39,14 +38,6 @@ public class UsuarioDTO {
         this.login = login;
     }
 
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     public Integer getPermissao() {
         return permissao;
     }
@@ -54,37 +45,23 @@ public class UsuarioDTO {
     public void setPermissao(Integer permissao) {
         this.permissao = permissao;
     }
-    //endregion
 
-    //region Constructors
+    // Conversões
     public static UsuarioDTO fromEntity(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
         dto.setNome(usuario.getNome());
         dto.setLogin(usuario.getLogin());
-        dto.setSenha(usuario.getSenha());
         dto.setPermissao(usuario.getPermissao());
         return dto;
     }
 
-    public Usuario toEntity() {
-        Usuario usuario = new Usuario();
-        usuario.setId(this.getId());
-        usuario.setNome(this.getNome());
-        usuario.setLogin(this.getLogin());
-        usuario.setSenha(this.getSenha());
-        usuario.setPermissao(this.getPermissao());
-        return usuario;
-    }
-
     public static List<UsuarioDTO> fromEntity(List<Usuario> usuarios) {
-        return usuarios.stream().map(usuario -> fromEntity(usuario)).collect(Collectors.toList());
+        return usuarios.stream().map(UsuarioDTO::fromEntity).collect(Collectors.toList());
     }
 
     public static Page<UsuarioDTO> fromEntity(Page<Usuario> usuarios) {
-        List<UsuarioDTO> usuariosFind = usuarios.stream().map(usuario -> fromEntity(usuario)).collect(Collectors.toList());
-        Page<UsuarioDTO> usuariosDTO = new PageImpl<>(usuariosFind, usuarios.getPageable(), usuarios.getTotalElements());
-        return usuariosDTO;
+        List<UsuarioDTO> list = usuarios.stream().map(UsuarioDTO::fromEntity).collect(Collectors.toList());
+        return new PageImpl<>(list, usuarios.getPageable(), usuarios.getTotalElements());
     }
-    //endregion
 }

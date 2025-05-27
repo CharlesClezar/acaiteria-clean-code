@@ -12,48 +12,53 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/movimentacaoEstoque")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MovimentacaoEstoqueController extends AbstractController {
+
     @Autowired
     private MovimentacaoEstoqueService service;
 
     @PostMapping
-    public ResponseEntity<MovimentacaoEstoque> create(@RequestBody @Valid MovimentacaoEstoque entity) {
+    public ResponseEntity<MovimentacaoEstoqueDTO> create(@RequestBody @Valid MovimentacaoEstoqueDTO dto) {
+        MovimentacaoEstoque entity = dto.toEntity();
         MovimentacaoEstoque save = service.salvar(entity);
-        return ResponseEntity.created(URI.create("/api/movimentacaoEstoque/" + entity.getId())).body(save);
+        return ResponseEntity.created(URI.create("/api/movimentacaoEstoque/" + save.getId()))
+                .body(MovimentacaoEstoqueDTO.fromEntity(save));
     }
 
     @GetMapping
     public ResponseEntity<Page<MovimentacaoEstoqueDTO>> findAll(@RequestParam(required = false) String filter,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "15") int size) {
-        Page<MovimentacaoEstoque> movimentacaoEstoques = service.buscaTodos(filter, PageRequest.of(page, size));
-        Page<MovimentacaoEstoqueDTO> movimentacaoEstoqueDTOS = MovimentacaoEstoqueDTO.fromEntity(movimentacaoEstoques);
-        return ResponseEntity.ok(movimentacaoEstoqueDTOS);
+        Page<MovimentacaoEstoque> movimentacoes = service.buscaTodos(filter, PageRequest.of(page, size));
+        Page<MovimentacaoEstoqueDTO> dtos = MovimentacaoEstoqueDTO.fromEntity(movimentacoes);
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<MovimentacaoEstoque> findById(@PathVariable("id") Long id) {
-        MovimentacaoEstoque movimentacaoEstoque = service.buscaPorId(id);
-        return ResponseEntity.ok(movimentacaoEstoque);
+    public ResponseEntity<MovimentacaoEstoqueDTO> findById(@PathVariable("id") Long id) {
+        MovimentacaoEstoque entity = service.buscaPorId(id);
+        return ResponseEntity.ok(MovimentacaoEstoqueDTO.fromEntity(entity));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<MovimentacaoEstoque> remove(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
         service.remover(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody MovimentacaoEstoque entity) {
+    public ResponseEntity<MovimentacaoEstoqueDTO> update(@PathVariable("id") Long id,
+                                                         @RequestBody @Valid MovimentacaoEstoqueDTO dto) {
         try {
+            MovimentacaoEstoque entity = dto.toEntity();
             MovimentacaoEstoque alterado = service.alterar(id, entity);
-            return ResponseEntity.ok().body(alterado);
-        }
-        catch (NotFoundException nfe) {
+            return ResponseEntity.ok(MovimentacaoEstoqueDTO.fromEntity(alterado));
+        } catch (NotFoundException nfe) {
             return ResponseEntity.noContent().build();
         }
     }
