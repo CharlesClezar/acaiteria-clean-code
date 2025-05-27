@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PedidoDTO {
 
@@ -82,7 +81,7 @@ public class PedidoDTO {
     public static List<PedidoDTO> fromEntity(List<Pedido> pedidos) {
         return pedidos.stream()
                 .map(PedidoDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static Page<PedidoDTO> fromEntity(Page<Pedido> pedidos) {

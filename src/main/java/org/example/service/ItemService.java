@@ -9,25 +9,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemService {
 
     private final ItemRepository repository;
-    private final UnidadeMedidaService unidadeMedidaService;
     private final ModelMapper modelMapper;
 
     public ItemService(ItemRepository repository,
-                       UnidadeMedidaService unidadeMedidaService,
                        ModelMapper modelMapper) {
         this.repository = repository;
-        this.unidadeMedidaService = unidadeMedidaService;
         this.modelMapper = modelMapper;
     }
 
     public Item salvar(Item entity) {
-        if (entity == null) throw new ValidationException("Item inválido.");
+        if (entity == null) {
+            throw new ValidationException("Item inválido.");
+        }
 
         validarDuplicidade(entity.getDescricao(), 0L);
 
@@ -47,13 +45,16 @@ public class ItemService {
     }
 
     public Item buscaPorId(Long id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("Item não encontrado."));
+        return repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item com ID " + id + " não encontrado."));
     }
 
     public Item alterar(Long id, Item entity) {
-        if (entity == null) throw new ValidationException("Item inválido.");
+        if (entity == null) {
+            throw new ValidationException("Item inválido.");
+        }
 
-        Item existente = buscaPorId(id); // já lança exceção se não encontrar
+        Item existente = buscaPorId(id); // Lança NotFoundException se não encontrar
         validarDuplicidade(entity.getDescricao(), id);
 
         modelMapper.map(entity, existente);
@@ -65,9 +66,12 @@ public class ItemService {
     }
 
     private void validarDuplicidade(String descricao, Long id) {
-        boolean existe = repository.exists(QItem.item.id.ne(id).and(QItem.item.descricao.eq(descricao)));
+        boolean existe = repository.exists(
+                QItem.item.id.ne(id).and(QItem.item.descricao.eq(descricao))
+        );
+
         if (existe) {
-            throw new ValidationException("Já existe um item com essa descrição.");
+            throw new ValidationException("Já existe um item com a descrição '" + descricao + "'.");
         }
     }
 }

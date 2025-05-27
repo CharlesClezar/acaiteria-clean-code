@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UsuarioDTO {
 
@@ -55,7 +54,7 @@ public class UsuarioDTO {
     public static List<UsuarioDTO> fromEntity(List<Usuario> usuarios) {
         return usuarios.stream()
                 .map(UsuarioDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static Page<UsuarioDTO> fromEntity(Page<Usuario> usuarios) {

@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MovimentacaoEstoqueDTO {
 
@@ -67,7 +66,7 @@ public class MovimentacaoEstoqueDTO {
     public static List<MovimentacaoEstoqueDTO> fromEntity(List<MovimentacaoEstoque> entities) {
         return entities.stream()
                 .map(MovimentacaoEstoqueDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Página de entidades -> página de DTOs

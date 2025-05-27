@@ -1,38 +1,40 @@
-# ChangeLog - Projeto Acaiteria Clean Code
+# 📋 ChangeLog
 
-## [2025-05-26] Refatorações estruturais e correções SonarQube
+## Refatorações 
 
-### ✅ Refatoração de Controllers
-- Aplicada conversão de entidades JPA para DTOs em todos os Controllers:
-  - `ItemController`
-  - `PedidoController`
-  - `PedidoItemController`
-  - `UnidadeMedidaController`
-  - `MovimentacaoEstoqueController`
-  - `UsuarioController`
-- Removido uso direto de entidades nos endpoints públicos (`@RequestBody` e `@ResponseBody`).
-- Corrigido problema de segurança reportado pelo Sonar: `Replace this persistent entity with a DTO object`.
-- Corrigido uso de `ResponseEntity` com `Void`, `ok()`, `noContent()` e `notFound()` corretamente aplicados.
+### ✅ Segurança e Boas Práticas
+- Substituído uso de entidades JPA diretamente nos controllers por DTOs em todas as operações `@RequestBody` e `@ResponseBody`.
+- Implementada injeção de dependência por **construtor** em todas as classes de serviço e controllers, removendo `@Autowired` de campos (Code Smell resolvido).
+- Removido o uso de `WebMvcConfigurerAdapter`, substituído por `WebMvcConfigurer` conforme a especificação atual do Spring.
 
-### ✅ DTOs ajustados
-- DTOs atualizados para conter apenas dados simples e seguros (sem entidades aninhadas):
-  - `ItemDTO`
-  - `PedidoDTO`
-  - `PedidoItemDTO`
-  - `UnidadeMedidaDTO`
-  - `MovimentacaoEstoqueDTO`
-  - `UsuarioDTO`, `UsuarioCadastroDTO`, `LoginDTO`
-- `toEntity()` e `fromEntity()` padronizados e seguros.
-- Campo `senha` removido dos DTOs de resposta (`UsuarioDTO`).
+### ✅ Estrutura e Manutenibilidade
+- Separação clara entre camadas: `Controller`, `Service`, `DTO`, `Repository` e `Model`.
+- DTOs simplificados e sem acoplamento com entidades ou estruturas complexas.
+- Conversores adicionados em todos os DTOs (`fromEntity` / `toEntity`), com tratamento de `null` e construtores explícitos.
+- Código de tratamento para exceções `NotFoundException` e `ValidationException` padronizado em todos os serviços.
 
-### ✅ Refatoração de Services
-- Todos os serviços refatorados para:
-  - Utilizar injeção de dependência via **construtor** ao invés de `@Autowired` em campo.
-  - Eliminar `findById(...).orElse(null)` → substituído por `orElseThrow(...)` com `NotFoundException`.
-  - Melhorar nomenclaturas e clareza semântica (`validarDuplicidadeLogin`, `validarDuplicidadeSigla`, etc.).
-  - Adicionar validação explícita de entrada (`null` ou campos obrigatórios).
-- `PedidoItemService`: método `salvarByPedido(...)` renomeado para `salvarSemMovimentacao(...)` para melhor expressividade.
-- `UsuarioService`: refatorado para evitar injeção duplicada e comparação de senha por `equals()`, com recomendação para uso de `BCrypt`.
+### ✅ Refatorações baseadas no SonarQube
+- Corrigidos problemas de **cobertura nula** com mensagens explícitas.
+- Redução de complexidade cognitiva em métodos grandes.
+- Remoção de imports não utilizados.
+- Simplificações aplicadas (ex: `stream().collect(Collectors.toList())` → `stream().toList()`).
+- Tratamento de exceções duplicadas unificado.
+- Classes utilitárias com construtor privado para evitar instanciação incorreta.
+
+### ✅ Organização e Qualidade de Código
+- Padronização de nome de métodos, parâmetros e campos em camelCase.
+- Mensagens de erro e validação reescritas com clareza.
+- Atualização do `pom.xml` com versões estáveis e correção de dependências ausentes.
+- Reorganização dos `@JoinColumn`, `@Cascade` e mapeamentos JPA redundantes.
+
+### ✅ Integração com Linter
+- O projeto foi analisado com **SonarQube (via Docker)** para detectar duplicações, code smells, ausência de cobertura e problemas de boas práticas.
+- Diversas sugestões do Sonar foram aplicadas, incluindo:
+  - Substituição de `@Autowired` por injeção via construtor;
+  - Redução da complexidade de métodos;
+  - Remoção de imports e blocos de código não utilizados;
+  - Melhoria da segurança e clareza dos DTOs.
+
 
 
 

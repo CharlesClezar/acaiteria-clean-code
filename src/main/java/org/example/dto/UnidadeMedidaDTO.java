@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UnidadeMedidaDTO {
 
@@ -58,7 +57,7 @@ public class UnidadeMedidaDTO {
     public static List<UnidadeMedidaDTO> fromEntity(List<UnidadeMedida> entities) {
         return entities.stream()
                 .map(UnidadeMedidaDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Página de entidades para página de DTOs

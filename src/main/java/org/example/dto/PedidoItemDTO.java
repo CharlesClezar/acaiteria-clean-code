@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PedidoItemDTO {
 
@@ -14,8 +13,10 @@ public class PedidoItemDTO {
     private Double valorVenda;
     private Integer quantidade;
 
-    // Construtores
-    public PedidoItemDTO() {}
+    // Construtor privado padrão para evitar instanciação incorreta
+    private PedidoItemDTO() {
+        // Oculto intencionalmente
+    }
 
     public PedidoItemDTO(Long id, String descricaoItem, Double valorVenda, Integer quantidade) {
         this.id = id;
@@ -26,19 +27,15 @@ public class PedidoItemDTO {
 
     // Getters e Setters
     public Long getId() { return id; }
-
     public void setId(Long id) { this.id = id; }
 
     public String getDescricaoItem() { return descricaoItem; }
-
     public void setDescricaoItem(String descricaoItem) { this.descricaoItem = descricaoItem; }
 
     public Double getValorVenda() { return valorVenda; }
-
     public void setValorVenda(Double valorVenda) { this.valorVenda = valorVenda; }
 
     public Integer getQuantidade() { return quantidade; }
-
     public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
 
     // Conversão de entidade para DTO
@@ -66,7 +63,7 @@ public class PedidoItemDTO {
     public static List<PedidoItemDTO> fromEntity(List<PedidoItem> entities) {
         return entities.stream()
                 .map(PedidoItemDTO::fromEntity)
-                .collect(Collectors.toList());
+                .toList(); // Substitui Collectors.toList()
     }
 
     // Conversão de página de entidades

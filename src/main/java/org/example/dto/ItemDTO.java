@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ItemDTO {
     private Long id;
@@ -79,11 +78,11 @@ public class ItemDTO {
     }
 
     public static List<ItemDTO> fromEntity(List<Item> items) {
-        return items.stream().map(ItemDTO::fromEntity).collect(Collectors.toList());
+        return items.stream().map(ItemDTO::fromEntity).toList();
     }
 
     public static Page<ItemDTO> fromEntity(Page<Item> items) {
-        List<ItemDTO> dtos = items.stream().map(ItemDTO::fromEntity).collect(Collectors.toList());
+        List<ItemDTO> dtos = items.stream().map(ItemDTO::fromEntity).toList();
         return new PageImpl<>(dtos, items.getPageable(), items.getTotalElements());
     }
 }
