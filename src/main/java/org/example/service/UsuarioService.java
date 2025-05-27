@@ -21,7 +21,7 @@ public class UsuarioService {
         this.modelMapper = modelMapper;
     }
 
-    public Usuario salvar(Usuario entity) {
+    public Usuario salvarUsuario(Usuario entity) {
         if (entity == null || entity.getLogin() == null) {
             throw new ValidationException("Usuário inválido.");
         }
@@ -30,31 +30,31 @@ public class UsuarioService {
         return repository.save(entity);
     }
 
-    public List<Usuario> buscaTodos(String filter) {
+    public List<Usuario> buscarTodosUsuarios(String filter) {
         return repository.findAll(filter, Usuario.class);
     }
 
-    public Page<Usuario> buscaTodos(String filter, Pageable pageable) {
+    public Page<Usuario> buscarTodosUsuariosPaginado(String filter, Pageable pageable) {
         return repository.findAll(filter, Usuario.class, pageable);
     }
 
-    public Usuario buscaPorId(Long id) {
+    public Usuario buscarUsuarioPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
     }
 
-    public Usuario alterar(Long id, Usuario entity) {
+    public Usuario editarUsuario(Long id, Usuario entity) {
         if (entity == null || entity.getLogin() == null) {
             throw new ValidationException("Usuário inválido.");
         }
 
-        Usuario existente = buscaPorId(id);
+        Usuario existente = buscarUsuarioPorId(id);
         validarDuplicidadeLogin(entity.getLogin(), id);
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarUsuario(Long id) {
         repository.deleteById(id);
     }
 

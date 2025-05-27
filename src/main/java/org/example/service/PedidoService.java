@@ -20,36 +20,36 @@ public class PedidoService {
         this.modelMapper = modelMapper;
     }
 
-    public Pedido salvar(Pedido entity) {
+    public Pedido salvarPedido(Pedido entity) {
         if (entity == null) {
             throw new ValidationException("Pedido inválido.");
         }
         return repository.save(entity);
     }
 
-    public List<Pedido> buscaTodos(String filter) {
+    public List<Pedido> buscarTodosPedidos(String filter) {
         return repository.findAll(filter, Pedido.class);
     }
 
-    public Page<Pedido> buscaTodos(String filter, Pageable pageable) {
+    public Page<Pedido> buscarTodosPedidosPaginado(String filter, Pageable pageable) {
         return repository.findAll(filter, Pedido.class, pageable);
     }
 
-    public Pedido buscaPorId(Long id) {
+    public Pedido buscarPedidoPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Pedido não encontrado!"));
     }
 
-    public Pedido alterar(Long id, Pedido entity) {
+    public Pedido editarPedido(Long id, Pedido entity) {
         if (entity == null) {
             throw new ValidationException("Pedido inválido.");
         }
-        Pedido existente = buscaPorId(id);
+        Pedido existente = buscarPedidoPorId(id);
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarPedido(Long id) {
         repository.deleteById(id);
     }
 }

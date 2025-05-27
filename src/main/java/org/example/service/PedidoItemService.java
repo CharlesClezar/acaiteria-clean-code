@@ -31,7 +31,7 @@ public class PedidoItemService {
 
     public PedidoItem salvar(PedidoItem entity) {
         validarEstoqueEAtualizar(entity);
-        movimentacaoEstoqueService.salvarMovimentacao(
+        movimentacaoEstoqueService.registrarMovimentacao(
                 entity.getItem(),
                 entity.getQuantidade(),
                 TipoMovimentacao.SAIDA,
@@ -44,36 +44,36 @@ public class PedidoItemService {
         return repository.save(entity);
     }
 
-    public List<PedidoItem> buscaTodos(String filter) {
+    public List<PedidoItem> buscarTodosPedidosItem(String filter) {
         return repository.findAll(filter, PedidoItem.class);
     }
 
-    public Page<PedidoItem> buscaTodos(String filter, Pageable pageable) {
+    public Page<PedidoItem> buscarTodosPedidosItemPaginado(String filter, Pageable pageable) {
         return repository.findAll(filter, PedidoItem.class, pageable);
     }
 
-    public PedidoItem buscaPorId(Long id) {
+    public PedidoItem buscarPedidoItemPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item do pedido não encontrado!"));
     }
 
-    public PedidoItem alterar(Long id, PedidoItem entity) {
-        PedidoItem existente = buscaPorId(id);
+    public PedidoItem editarPedidoItem(Long id, PedidoItem entity) {
+        PedidoItem existente = buscarPedidoItemPorId(id);
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarPedidoItem(Long id) {
         repository.deleteById(id);
     }
 
     private void validarEstoqueEAtualizar(PedidoItem entity) {
-        Item item = itemService.buscaPorId(entity.getItem().getId());
+        Item item = itemService.buscarItemPorId(entity.getItem().getId());
         int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
         if (novoEstoque < 0) {
             throw new ValidationException("Quantidade solicitada é maior do que o estoque disponível!");
         }
         item.setQuantidadeEstoque(novoEstoque);
-        itemService.alterar(item.getId(), item);
+        itemService.editarItem(item.getId(), item);
     }
 }

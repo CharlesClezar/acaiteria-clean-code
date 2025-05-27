@@ -21,7 +21,7 @@ public class UnidadeMedidaService {
         this.modelMapper = modelMapper;
     }
 
-    public UnidadeMedida salvar(UnidadeMedida entity) {
+    public UnidadeMedida salvarUnidadeMedida(UnidadeMedida entity) {
         if (entity == null || entity.getSigla() == null) {
             throw new ValidationException("Unidade de medida inválida.");
         }
@@ -30,32 +30,32 @@ public class UnidadeMedidaService {
         return repository.save(entity);
     }
 
-    public List<UnidadeMedida> buscaTodos(String filter) {
+    public List<UnidadeMedida> buscarTodasUnidadesMedida(String filter) {
         return repository.findAll(filter, UnidadeMedida.class);
     }
 
-    public Page<UnidadeMedida> buscaTodos(String filter, Pageable pageable) {
+    public Page<UnidadeMedida> buscarTodasUnidadesMedidaPaginada(String filter, Pageable pageable) {
         return repository.findAll(filter, UnidadeMedida.class, pageable);
     }
 
-    public UnidadeMedida buscaPorId(Long id) {
+    public UnidadeMedida buscarUnidadeMedidaPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Unidade de medida não encontrada!"));
     }
 
-    public UnidadeMedida alterar(Long id, UnidadeMedida entity) {
+    public UnidadeMedida editarUnidadeMedida(Long id, UnidadeMedida entity) {
         if (entity == null || entity.getSigla() == null) {
             throw new ValidationException("Unidade de medida inválida.");
         }
 
-        UnidadeMedida existente = buscaPorId(id);
+        UnidadeMedida existente = buscarUnidadeMedidaPorId(id);
         validarDuplicidadeSigla(entity.getSigla(), id);
 
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarUnidadeMedida(Long id) {
         repository.deleteById(id);
     }
 

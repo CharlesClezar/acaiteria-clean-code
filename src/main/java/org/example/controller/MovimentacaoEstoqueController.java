@@ -26,7 +26,7 @@ public class MovimentacaoEstoqueController extends AbstractController {
     @PostMapping
     public ResponseEntity<MovimentacaoEstoqueDTO> create(@RequestBody @Valid MovimentacaoEstoqueDTO dto) {
         MovimentacaoEstoque entity = dto.toEntity();
-        MovimentacaoEstoque save = service.salvar(entity);
+        MovimentacaoEstoque save = service.salvarMovimentacao(entity);
         return ResponseEntity.created(URI.create("/api/movimentacaoEstoque/" + save.getId()))
                 .body(MovimentacaoEstoqueDTO.fromEntity(save));
     }
@@ -35,20 +35,20 @@ public class MovimentacaoEstoqueController extends AbstractController {
     public ResponseEntity<Page<MovimentacaoEstoqueDTO>> findAll(@RequestParam(required = false) String filter,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "15") int size) {
-        Page<MovimentacaoEstoque> movimentacoes = service.buscaTodos(filter, PageRequest.of(page, size));
+        Page<MovimentacaoEstoque> movimentacoes = service.buscarTodasMovimentacoesPaginada(filter, PageRequest.of(page, size));
         Page<MovimentacaoEstoqueDTO> dtos = MovimentacaoEstoqueDTO.fromEntity(movimentacoes);
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<MovimentacaoEstoqueDTO> findById(@PathVariable("id") Long id) {
-        MovimentacaoEstoque entity = service.buscaPorId(id);
+        MovimentacaoEstoque entity = service.buscarMovimentacaoPorId(id);
         return ResponseEntity.ok(MovimentacaoEstoqueDTO.fromEntity(entity));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
-        service.remover(id);
+        service.deletarMovimentacao(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -57,7 +57,7 @@ public class MovimentacaoEstoqueController extends AbstractController {
                                                          @RequestBody @Valid MovimentacaoEstoqueDTO dto) {
         try {
             MovimentacaoEstoque entity = dto.toEntity();
-            MovimentacaoEstoque alterado = service.alterar(id, entity);
+            MovimentacaoEstoque alterado = service.editarMovimentacao(id, entity);
             return ResponseEntity.ok(MovimentacaoEstoqueDTO.fromEntity(alterado));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();

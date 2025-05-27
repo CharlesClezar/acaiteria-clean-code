@@ -35,20 +35,20 @@ public class PedidoItemController extends AbstractController {
     public ResponseEntity<Page<PedidoItemDTO>> findAll(@RequestParam(required = false) String filter,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "15") int size) {
-        Page<PedidoItem> pedidoItems = service.buscaTodos(filter, PageRequest.of(page, size));
+        Page<PedidoItem> pedidoItems = service.buscarTodosPedidosItemPaginado(filter, PageRequest.of(page, size));
         Page<PedidoItemDTO> dtos = PedidoItemDTO.fromEntity(pedidoItems);
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<PedidoItemDTO> findById(@PathVariable("id") Long id) {
-        PedidoItem pedidoItem = service.buscaPorId(id);
+        PedidoItem pedidoItem = service.buscarPedidoItemPorId(id);
         return ResponseEntity.ok(PedidoItemDTO.fromEntity(pedidoItem));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
-        service.remover(id);
+        service.deletarPedidoItem(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -57,7 +57,7 @@ public class PedidoItemController extends AbstractController {
                                                 @RequestBody @Valid PedidoItemDTO dto) {
         try {
             PedidoItem entity = dto.toEntity();
-            PedidoItem alterado = service.alterar(id, entity);
+            PedidoItem alterado = service.editarPedidoItem(id, entity);
             return ResponseEntity.ok(PedidoItemDTO.fromEntity(alterado));
         } catch (NotFoundException nfe) {
             return ResponseEntity.notFound().build();

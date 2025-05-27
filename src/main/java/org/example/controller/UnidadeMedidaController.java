@@ -26,7 +26,7 @@ public class UnidadeMedidaController extends AbstractController {
     @PostMapping
     public ResponseEntity<UnidadeMedidaDTO> create(@RequestBody @Valid UnidadeMedidaDTO dto) {
         UnidadeMedida entity = dto.toEntity();
-        UnidadeMedida saved = service.salvar(entity);
+        UnidadeMedida saved = service.salvarUnidadeMedida(entity);
         return ResponseEntity.created(URI.create("/api/unidadeMedida/" + saved.getId()))
                 .body(UnidadeMedidaDTO.fromEntity(saved));
     }
@@ -35,19 +35,19 @@ public class UnidadeMedidaController extends AbstractController {
     public ResponseEntity<Page<UnidadeMedidaDTO>> findAll(@RequestParam(required = false) String filter,
                                                           @RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "15") int size) {
-        Page<UnidadeMedida> unidades = service.buscaTodos(filter, PageRequest.of(page, size));
+        Page<UnidadeMedida> unidades = service.buscarTodasUnidadesMedidaPaginada(filter, PageRequest.of(page, size));
         return ResponseEntity.ok(UnidadeMedidaDTO.fromEntity(unidades));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UnidadeMedidaDTO> findById(@PathVariable("id") Long id) {
-        UnidadeMedida unidade = service.buscaPorId(id);
+        UnidadeMedida unidade = service.buscarUnidadeMedidaPorId(id);
         return ResponseEntity.ok(UnidadeMedidaDTO.fromEntity(unidade));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
-        service.remover(id);
+        service.deletarUnidadeMedida(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -56,7 +56,7 @@ public class UnidadeMedidaController extends AbstractController {
                                                    @RequestBody @Valid UnidadeMedidaDTO dto) {
         try {
             UnidadeMedida entity = dto.toEntity();
-            UnidadeMedida alterado = service.alterar(id, entity);
+            UnidadeMedida alterado = service.editarUnidadeMedida(id, entity);
             return ResponseEntity.ok(UnidadeMedidaDTO.fromEntity(alterado));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();

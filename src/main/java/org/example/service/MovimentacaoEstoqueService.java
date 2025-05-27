@@ -23,35 +23,35 @@ public class MovimentacaoEstoqueService {
         this.modelMapper = modelMapper;
     }
 
-    public MovimentacaoEstoque salvar(MovimentacaoEstoque entity) {
+    public MovimentacaoEstoque salvarMovimentacao(MovimentacaoEstoque entity) {
         return repository.save(entity);
     }
 
-    public List<MovimentacaoEstoque> buscaTodos(String filter) {
+    public List<MovimentacaoEstoque> buscarTodasMovimentacoes(String filter) {
         return repository.findAll(filter, MovimentacaoEstoque.class);
     }
 
-    public Page<MovimentacaoEstoque> buscaTodos(String filter, Pageable pageable) {
+    public Page<MovimentacaoEstoque> buscarTodasMovimentacoesPaginada(String filter, Pageable pageable) {
         return repository.findAll(filter, MovimentacaoEstoque.class, pageable);
     }
 
-    public MovimentacaoEstoque buscaPorId(Long id) {
+    public MovimentacaoEstoque buscarMovimentacaoPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Movimentação de estoque não encontrada!"));
     }
 
-    public MovimentacaoEstoque alterar(Long id, MovimentacaoEstoque entity) {
-        MovimentacaoEstoque existente = buscaPorId(id);
+    public MovimentacaoEstoque editarMovimentacao(Long id, MovimentacaoEstoque entity) {
+        MovimentacaoEstoque existente = buscarMovimentacaoPorId(id);
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarMovimentacao(Long id) {
         repository.deleteById(id);
     }
 
-    public void salvarMovimentacao(Item item, Integer quantidade, TipoMovimentacao tipo, Double valor) {
-        validarQuantidade(quantidade);
+    public void registrarMovimentacao(Item item, Integer quantidade, TipoMovimentacao tipo, Double valor) {
+        validarQuantidadePositiva(quantidade);
 
         MovimentacaoEstoque mov = new MovimentacaoEstoque();
         mov.setItem(item);
@@ -60,10 +60,10 @@ public class MovimentacaoEstoqueService {
         mov.setTipo(tipo);
         mov.setValor(valor);
 
-        salvar(mov);
+        salvarMovimentacao(mov);
     }
 
-    private void validarQuantidade(Integer quantidade) {
+    private void validarQuantidadePositiva(Integer quantidade) {
         if (quantidade == null || quantidade < 0) {
             throw new ValidationException("Quantidade não pode ser menor que zero!");
         }

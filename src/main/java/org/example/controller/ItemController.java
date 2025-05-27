@@ -31,8 +31,8 @@ public class ItemController extends AbstractController {
     @PostMapping
     public ResponseEntity<ItemDTO> create(@RequestBody @Valid ItemDTO itemDTO) throws ValidationException {
         Item entity = itemDTO.toEntity();
-        Item saved = itemService.salvar(entity);
-        movimentacaoEstoqueService.salvarMovimentacao(
+        Item saved = itemService.salvarItem(entity);
+        movimentacaoEstoqueService.registrarMovimentacao(
                 saved,
                 saved.getQuantidadeEstoque(),
                 TipoMovimentacao.ENTRADA,
@@ -46,34 +46,34 @@ public class ItemController extends AbstractController {
     public ResponseEntity<Page<ItemDTO>> findAll(@RequestParam(required = false) String filter,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "15") int size) {
-        Page<Item> itens = itemService.buscaTodos(filter, PageRequest.of(page, size));
+        Page<Item> itens = itemService.buscarTodosItensPaginado(filter, PageRequest.of(page, size));
         Page<ItemDTO> itemDTOS = ItemDTO.fromEntity(itens);
         return ResponseEntity.ok(itemDTOS);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<ItemDTO> findById(@PathVariable("id") Long id) {
-        Item item = itemService.buscaPorId(id);
+        Item item = itemService.buscarItemPorId(id);
         return ResponseEntity.ok(ItemDTO.fromEntity(item));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
-        itemService.remover(id);
+        itemService.deletarItem(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
     public ResponseEntity<ItemDTO> update(@PathVariable("id") Long id, @RequestBody @Valid ItemDTO itemDTO) {
         try {
-            Integer quantidadeAnterior = itemService.buscaPorId(id).getQuantidadeEstoque();
+            Integer quantidadeAnterior = itemService.buscarItemPorId(id).getQuantidadeEstoque();
             Item entity = itemDTO.toEntity();
-            Item alterado = itemService.alterar(id, entity);
+            Item alterado = itemService.editarItem(id, entity);
 
             if (!quantidadeAnterior.equals(alterado.getQuantidadeEstoque())) {
                 Integer diferenca = alterado.getQuantidadeEstoque() - quantidadeAnterior;
                 Double valor = alterado.getPrecoCompra() * Math.abs(diferenca);
-                movimentacaoEstoqueService.salvarMovimentacao(
+                movimentacaoEstoqueService.registrarMovimentacao(
                         alterado,
                         diferenca,
                         diferenca > 0 ? TipoMovimentacao.ENTRADA : TipoMovimentacao.SAIDA,

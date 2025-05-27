@@ -29,7 +29,7 @@ public class UsuarioController extends AbstractController {
     @PostMapping
     public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCadastroDTO dto) {
         Usuario entity = dto.toEntity();
-        Usuario saved = service.salvar(entity);
+        Usuario saved = service.salvarUsuario(entity);
         return ResponseEntity.created(URI.create("/api/usuario/" + saved.getId()))
                 .body(UsuarioDTO.fromEntity(saved));
     }
@@ -48,19 +48,19 @@ public class UsuarioController extends AbstractController {
     public ResponseEntity<Page<UsuarioDTO>> findAll(@RequestParam(required = false) String filter,
                                                     @RequestParam(defaultValue = "0") int page,
                                                     @RequestParam(defaultValue = "15") int size) {
-        Page<Usuario> usuarios = service.buscaTodos(filter, PageRequest.of(page, size));
+        Page<Usuario> usuarios = service.buscarTodosUsuariosPaginado(filter, PageRequest.of(page, size));
         return ResponseEntity.ok(UsuarioDTO.fromEntity(usuarios));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable("id") Long id) {
-        Usuario usuario = service.buscaPorId(id);
+        Usuario usuario = service.buscarUsuarioPorId(id);
         return ResponseEntity.ok(UsuarioDTO.fromEntity(usuario));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> remove(@PathVariable("id") Long id) {
-        service.remover(id);
+        service.deletarUsuario(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -69,7 +69,7 @@ public class UsuarioController extends AbstractController {
                                              @RequestBody @Valid UsuarioCadastroDTO dto) {
         try {
             Usuario entity = dto.toEntity();
-            Usuario alterado = service.alterar(id, entity);
+            Usuario alterado = service.editarUsuario(id, entity);
             return ResponseEntity.ok(UsuarioDTO.fromEntity(alterado));
         } catch (NotFoundException nfe) {
             return ResponseEntity.notFound().build();

@@ -22,12 +22,12 @@ public class ItemService {
         this.modelMapper = modelMapper;
     }
 
-    public Item salvar(Item entity) {
+    public Item salvarItem(Item entity) {
         if (entity == null) {
             throw new ValidationException("Item inválido.");
         }
 
-        validarDuplicidade(entity.getDescricao(), 0L);
+        verificarItemDuplicado(entity.getDescricao(), 0L);
 
         if (entity.getPrecoCompra() > entity.getPrecoVenda()) {
             throw new ValidationException("O preço de compra não pode ser maior que o de venda.");
@@ -36,36 +36,36 @@ public class ItemService {
         return repository.save(entity);
     }
 
-    public Page<Item> buscaTodos(String filter, Pageable pageable) {
+    public Page<Item> buscarTodosItensPaginado(String filter, Pageable pageable) {
         return repository.findAll(filter, Item.class, pageable);
     }
 
-    public List<Item> buscaTodos(String filter) {
+    public List<Item> buscarTodosItens(String filter) {
         return repository.findAll(filter, Item.class);
     }
 
-    public Item buscaPorId(Long id) {
+    public Item buscarItemPorId(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item com ID " + id + " não encontrado."));
     }
 
-    public Item alterar(Long id, Item entity) {
+    public Item editarItem(Long id, Item entity) {
         if (entity == null) {
             throw new ValidationException("Item inválido.");
         }
 
-        Item existente = buscaPorId(id); // Lança NotFoundException se não encontrar
-        validarDuplicidade(entity.getDescricao(), id);
+        Item existente = buscarItemPorId(id); // Lança NotFoundException se não encontrar
+        verificarItemDuplicado(entity.getDescricao(), id);
 
         modelMapper.map(entity, existente);
         return repository.save(existente);
     }
 
-    public void remover(Long id) {
+    public void deletarItem(Long id) {
         repository.deleteById(id);
     }
 
-    private void validarDuplicidade(String descricao, Long id) {
+    private void verificarItemDuplicado(String descricao, Long id) {
         boolean existe = repository.exists(
                 QItem.item.id.ne(id).and(QItem.item.descricao.eq(descricao))
         );
