@@ -36,9 +36,7 @@ As ações de refatoração foram guiadas pelos princípios do **Clean Code** e 
 
 ## 📋 ChangeLog
 
-Todas as alterações realizadas estão detalhadas no arquivo [CHANGELOG.md](./CHANGELOG_FINAL.md).
-=======
-Todas as alterações realizadas estão detalhadas no arquivo [CHANGELOG.md](./CHANGELOG.md).
+- Todas as alterações realizadas estão detalhadas no arquivo [CHANGELOG.md](./CHANGELOG.md).
 
 ## ✅ Testes Implementados
 
