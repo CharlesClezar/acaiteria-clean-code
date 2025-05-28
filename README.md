@@ -1,4 +1,3 @@
-
 # 🧃 Acaiteria ABP Java
 
 Este projeto é uma API desenvolvida em Java com Spring Boot para gerenciamento de pedidos e controle de estoque de uma açaiteria fictícia. O sistema foi construído com foco em boas práticas de codificação, separação de responsabilidades e validações baseadas nas regras de negócio do domínio.
@@ -37,30 +36,51 @@ As ações de refatoração foram guiadas pelos princípios do **Clean Code** e 
 
 ## 📋 ChangeLog
 
-Todas as alterações realizadas estão detalhadas no arquivo [CHANGELOG.md](./CHANGELOG2.md).
+Todas as alterações realizadas estão detalhadas no arquivo [CHANGELOG.md](./CHANGELOG_FINAL.md).
 
 ## ✅ Testes Implementados
 
-Foram adicionados testes unitários para os principais serviços da aplicação, validando:
+Foram adicionados testes unitários para os principais serviços e controllers da aplicação, validando:
 
 - Regras de negócio fundamentais (ex: impedir vendas sem estoque ou em dia não fechado).
 - Validações de duplicidade (ex: sigla de unidade já existente).
 - Conversão entre DTOs e entidades.
+- Fluxos REST simulados com `MockMvc` nos controllers.
 
-## 💬 Interface Fluente
+Os testes fazem uso da **interface fluente** gerada com `@Builder` do Lombok para tornar os objetos de entrada mais legíveis e claros durante os cenários de teste.
 
-Foi adotado o padrão de **Interface Fluente** em métodos de construção de objetos e builders, proporcionando:
+## 💬 Interface Fluente com Lombok
 
-- Leitura mais fluida e natural da criação de objetos complexos.
+Foi adotado o padrão de **Interface Fluente** nos DTOs usando `@Builder`, especialmente útil em testes. Essa abordagem permite:
+
+- Leitura mais fluida e natural da construção de objetos.
 - Cadeia de chamadas encadeadas, reduzindo código verboso.
+- Criação explícita de objetos com clareza nos atributos definidos.
 
 Exemplo:
 ```java
-PedidoDTO pedido = new PedidoDTO()
-    .comDescricao("Pedido Especial")
-    .comItens(itens)
-    .comCliente(cliente);
+ItemDTO dto = ItemDTO.builder()
+    .descricao("Açaí")
+    .precoCompra(5.0)
+    .precoVenda(10.0)
+    .quantidadeEstoque(10)
+    .build();
 ```
+
+## 📈 Análise SonarQube
+
+A qualidade do código foi verificada com **SonarQube**, que avaliou aspectos como segurança, manutenibilidade, confiabilidade e duplicação de código.
+
+![Relatório SonarQube](./sonar.png)
+
+Resumo dos principais resultados:
+- **Segurança:** Nenhum problema crítico detectado.
+- **Confiabilidade:** Código confiável e estável.
+- **Manutenibilidade:** Apenas 9 pontos de melhoria identificados.
+- **Cobertura de Testes:** Ainda precisa ser aumentada (0%), mas os testes principais já estão sendo implementados.
+- **Duplicações:** Nenhuma duplicação detectada.
+
+Essa análise reforça que a base do projeto está saudável e pronta para evoluções futuras.
 
 ## 📦 Instalação e Execução
 
@@ -87,7 +107,11 @@ A API estará disponível em: `http://localhost:8080`
 
 ### Rodar SonarQube (opcional)
 ```bash
-mvn clean verify sonar:sonar   -Dsonar.projectKey=acaiteria   -Dsonar.projectName="acaiteria"   -Dsonar.host.url=http://localhost:9000   -Dsonar.token=SEU_TOKEN
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=acaiteria \
+  -Dsonar.projectName="acaiteria" \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.token=SEU_TOKEN
 ```
 
 ## 📜 Regras de Negócio

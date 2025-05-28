@@ -119,3 +119,36 @@ if (repository.exists(QUnidadeMedida.unidadeMedida.id.ne(id).and(QUnidadeMedida.
 - Anotações do **Lombok** foram adicionadas às classes DTOs e modelos, como `@Getter`, `@Setter`, `@NoArgsConstructor` e `@AllArgsConstructor`.
 - Essa abordagem elimina a necessidade de escrever manualmente os métodos de acesso, construtores e facilita a manutenção do código.
 - Além de reduzir significativamente o tamanho dos arquivos, o uso do Lombok melhora a **produtividade do desenvolvedor** e **foca no domínio da aplicação**, mantendo o código mais limpo e enxuto.
+
+### ✅ Interface Fluente com Lombok (`@Builder`)
+- Todos os **DTOs da aplicação** foram atualizados para utilizar o padrão **Builder** por meio da anotação `@Builder` do Lombok.
+- Essa abordagem permite a criação de objetos de forma **mais fluente e legível**, especialmente útil durante testes e construções complexas de objetos.
+- Exemplo de uso:
+```java
+ItemDTO dto = ItemDTO.builder()
+    .descricao("Açaí")
+    .precoCompra(5.0)
+    .precoVenda(10.0)
+    .quantidadeEstoque(10)
+    .build();
+```
+- Além de melhorar a clareza, o uso do `@Builder` **reduz acoplamento com construtores longos** e promove práticas alinhadas ao Clean Code e à orientação a objetos moderna.
+
+### ✅ Aplicação do Princípio da Responsabilidade Única (SRP)
+- No serviço `PedidoItemService`, foram realizadas melhorias estruturais para separar claramente as **responsabilidades de validação** e de **atualização de estado**, conforme preconiza o **Princípio da Responsabilidade Única** do SOLID.
+```java
+private void validarEstoque(PedidoItem entity) {
+    Item item = itemService.buscarItemPorId(entity.getItem().getId());
+    int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
+    if (novoEstoque < 0) {
+        throw new ValidationException("Quantidade solicitada é maior do que o estoque disponível!");
+    }
+}
+
+private void atualizarEstoque(PedidoItem entity) {
+    Item item = itemService.buscarItemPorId(entity.getItem().getId());
+    int novoEstoque = item.getQuantidadeEstoque() - entity.getQuantidade();
+    item.setQuantidadeEstoque(novoEstoque);
+    itemService.editarItem(item.getId(), item);
+}
+```
